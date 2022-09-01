@@ -1,4 +1,5 @@
 let beadsCurtains = [];
+let points = [];
 
 function setup() {
   let cnv = createCanvas(displayWidth/2, displayHeight*(0.888));
@@ -58,6 +59,7 @@ function beadsCurtain(posX) {
 
 function draw_curve_line(posX, posY)
 {
+  points = [];
   let p1 = { x: 0, y: 0 };
   let p2 = { x: 0, y: 600 };
   //p1은 고정점
@@ -77,24 +79,28 @@ function draw_curve_line(posX, posY)
   var biangle =  angle - count/4;
   noFill();
 
-  bezier(p1.x, p1.y, p1.x, p1.y, p4.x, p4.y, p2.x+biangle*50, p2.y);
-  /*let steps =8;
-  for(let i=0; i<= steps; i++){
-    let t = 0.5;
-    let x = bezierPoint(p1.x, p1.x, p4.x, p2.x+biangle*50 , t);
-    let y = bezierPoint(p1.y, p1.y, p4.y, p2.y ,t);
-    ellipse(x, y, 10);
-  }*/
+  //bezier(p1.x, p1.y, p1.x, p1.y, p4.x, p4.y, p2.x+biangle*50, p2.y);
   let d = {x: p2.x+biangle*50, y: p2.y};
   let depth = 3;
-  draw_point(p1, p1, p4, d, depth);
-  //ellipse(p1.x, p1.y, 10);
-  //ellipse(d.x, d.y, 10);
-
+  stack_point(p1, p1, p4, d, depth);
+  points.sort((a,b)=>a.y-b.y);
+  var ttt=0;
+  var padding =5;
+  strokeCap(SQUARE);
+  for (var i=0; i<points.length-1; i++){
+    strokeWeight(3);
+    line(points[i].x, points[i].y+padding, points[i+1].x, points[i+1].y-padding);
+    strokeWeight(1);
+    ellipse(points[i].x, points[i].y, 3);
+    //textSize(20);
+    //text(ttt++, points[i].x, points[i].y);
+  }
+  //last beads
+  
   translate(-posX, -posY);
 }
 
-function draw_point(a, b, c, d, depth)
+function stack_point(a, b, c, d, depth)
 {//De Casteljau's algorithm
   let e = point_half(a,b);
   let f = point_half(b,c);
@@ -102,11 +108,12 @@ function draw_point(a, b, c, d, depth)
   let h = point_half(e,f);
   let j = point_half(f,g);
   let k = point_half(h,j);
-  ellipse(k.x, k.y, 10);
+  //ellipse(k.x, k.y, 10);
+  points.push(k);
   if(depth > 1)
   {
-      draw_point(a, e, h, k, depth-1);
-      draw_point(k, j, g, d, depth-1);
+    stack_point(a, e, h, k, depth-1);
+    stack_point(k, j, g, d, depth-1);
   }
 }
 
