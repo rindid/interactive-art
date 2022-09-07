@@ -2,12 +2,13 @@ let beadsCurtains = [];
 let points = [];
 
 function setup() {
-  let cnv = createCanvas(displayWidth/2, displayHeight*(0.888));
+  let cnv = createCanvas(displayWidth/2, displayHeight*(0.888), WEBGL);
   cnv.center('horizontal');
 }
 
 function draw() {
   background(220);
+  translate(-width/2, -height/2,0);
   for(var x=50; x<width; x+=50){
     beadsCurtains.push(new beadsCurtain(x));
   }
@@ -91,7 +92,9 @@ function draw_curve_line(posX, posY)
     strokeWeight(3);
     line(points[i].x, points[i].y+padding, points[i+1].x, points[i+1].y-padding);
     strokeWeight(1);
-    ellipse(points[i].x, points[i].y, 3);
+    if(i!=0)
+      draw_shape(points[i].x, points[i].y, 30, 10, biangle, i);
+    //ellipse(points[i].x, points[i].y, 3);
     //textSize(20);
     //text(ttt++, points[i].x, points[i].y);
   }
@@ -121,4 +124,21 @@ function point_half(p1, p2)
 {
   let ret = {x: (p1.x+p2.x)/2, y: (p1.y+p2.y)/2}
   return ret;
+}
+
+function draw_shape(posX, posY, dia, dia_h, angle, num)
+{
+  push();
+  //noStroke();
+  fill('rgba(0, 255, 255, 0.25)');
+  //translate(width/2, height/2,0);
+  //translate(-width/2, -height/2,0);
+  translate(posX, posY, 0);
+  angleMode(DEGREES);
+  rotateX(90);
+  rotateZ(angle*20*num);
+  
+  cylinder(dia, dia_h);
+  translate(-posX, -posY, 0);
+  pop();
 }
