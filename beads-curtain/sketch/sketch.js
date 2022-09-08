@@ -9,7 +9,7 @@ function setup() {
 function draw() {
   background(220);
   translate(-width/2, -height/2,0);
-  for(var x=50; x<width; x+=50){
+  for(var x=50; x+30<width; x+=50){
     beadsCurtains.push(new beadsCurtain(x));
   }
   for (let nowBeads of beadsCurtains){
@@ -55,21 +55,17 @@ function beadsCurtain(posX) {
   this.display = function() {
     
   }
-  draw_curve_line(posX, height / 4);
+  draw_curve_line(posX, 0);
 }
 
 function draw_curve_line(posX, posY)
 {
   points = [];
   let p1 = { x: 0, y: 0 };
-  let p2 = { x: 0, y: 600 };
+  let p2 = { x: 0, y: 800 };
   //p1은 고정점
   //p2는 움직이는 끝 점
-  let p3 = { x: 600, y: 600 };
-  let p4 = { x: 0, y: 500 };
-
-  let p6 = { x: 0, y: 200 };
-  let p5 = { x: 0, y: 400 };
+  let p4 = { x: 0, y: 700 };
   translate(posX, posY);
   stroke(120, 102, 155);
   let t = map(mouseX, 0, width, -5, 5);
@@ -85,20 +81,20 @@ function draw_curve_line(posX, posY)
   let depth = 3;
   stack_point(p1, p1, p4, d, depth);
   points.sort((a,b)=>a.y-b.y);
-  var ttt=0;
-  var padding =5;
+  var padding =15;
   strokeCap(SQUARE);
   for (var i=0; i<points.length-1; i++){
     strokeWeight(3);
     line(points[i].x, points[i].y+padding, points[i+1].x, points[i+1].y-padding);
     strokeWeight(1);
     if(i!=0)
-      draw_shape(points[i].x, points[i].y, 30, 10, biangle, i);
+      draw_shape(points[i].x, points[i].y, 20, 10, biangle, i);
     //ellipse(points[i].x, points[i].y, 3);
     //textSize(20);
-    //text(ttt++, points[i].x, points[i].y);
+    //text(biangle, points[i].x, points[i].y);
   }
   //last beads
+  draw_shape(points[points.length-1].x, points[points.length-1].y+15, 30, 10, biangle, points.length-1);
   
   translate(-posX, -posY);
 }
@@ -129,14 +125,14 @@ function point_half(p1, p2)
 function draw_shape(posX, posY, dia, dia_h, angle, num)
 {
   push();
-  //noStroke();
+  noStroke();
   fill('rgba(0, 255, 255, 0.25)');
   //translate(width/2, height/2,0);
   //translate(-width/2, -height/2,0);
   translate(posX, posY, 0);
   angleMode(DEGREES);
   rotateX(90);
-  rotateZ(angle*20*num);
+  rotateZ(angle*10*num);
   
   cylinder(dia, dia_h);
   translate(-posX, -posY, 0);
