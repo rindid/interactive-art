@@ -2,13 +2,18 @@ let beadsCurtains = [];
 let points = [];
 
 function setup() {
-  let cnv = createCanvas(displayWidth/2, displayHeight*(0.888), WEBGL);
+  let cnv = createCanvas(displayWidth/2, displayHeight*(0.888));
   cnv.center('horizontal');
+  scribble = new Scribble();
+  scribble.bowing = 0;          // changes the bowing of lines
+  scribble.roughness = 1;       // changes the roughness of lines
+  scribble.maxOffset = 1;       // coordinates will get an offset, here you define the max offset
+  scribble.numEllipseSteps = 1; // defines how much curves will be used to draw an ellipse
 }
 
 function draw() {
   background(220);
-  translate(-width/2, -height/2,0);
+  //translate(-width/2, -height/2,0);
   for(var x=50; x+30<width; x+=50){
     beadsCurtains.push(new beadsCurtain(x));
   }
@@ -79,22 +84,23 @@ function draw_curve_line(posX, posY)
   //bezier(p1.x, p1.y, p1.x, p1.y, p4.x, p4.y, p2.x+biangle*50, p2.y);
   let d = {x: p2.x+biangle*50, y: p2.y};
   let depth = 3;
-  stack_point(p1, p1, p4, d, depth);
+  stack_point(p1, p1, p4, d, depth); 
   points.sort((a,b)=>a.y-b.y);
   var padding =15;
   strokeCap(SQUARE);
   for (var i=0; i<points.length-1; i++){
     strokeWeight(3);
-    line(points[i].x, points[i].y+padding, points[i+1].x, points[i+1].y-padding);
+    scribble.scribbleLine(points[i].x, points[i].y+padding, points[i+1].x, points[i+1].y-padding);
+    //line(points[i].x, points[i].y+padding, points[i+1].x, points[i+1].y-padding);
     strokeWeight(1);
     if(i!=0)
-      draw_shape(points[i].x, points[i].y, 20, 10, biangle, i);
+      draw_shape(points[i].x, points[i].y, 20, biangle, i);
     //ellipse(points[i].x, points[i].y, 3);
     //textSize(20);
     //text(biangle, points[i].x, points[i].y);
   }
   //last beads
-  draw_shape(points[points.length-1].x, points[points.length-1].y+15, 30, 10, biangle, points.length-1);
+  draw_shape(points[points.length-1].x, points[points.length-1].y+15, 30, biangle, points.length-1);
   
   translate(-posX, -posY);
 }
@@ -122,19 +128,12 @@ function point_half(p1, p2)
   return ret;
 }
 
-function draw_shape(posX, posY, dia, dia_h, angle, num)
+function draw_shape(posX, posY, dia, angle, num)
 {
   push();
-  noStroke();
+  //noStroke();
   fill('rgba(0, 255, 255, 0.25)');
-  //translate(width/2, height/2,0);
-  //translate(-width/2, -height/2,0);
-  translate(posX, posY, 0);
-  angleMode(DEGREES);
-  rotateX(90);
-  rotateZ(angle*10*num);
-  
-  cylinder(dia, dia_h);
-  translate(-posX, -posY, 0);
+  ellipse(posX, posY, dia);
+  //scribble.scribbleEllipse(posX, posY, dia, dia);
   pop();
 }
